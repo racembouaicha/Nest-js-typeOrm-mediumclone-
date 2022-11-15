@@ -2,13 +2,15 @@ import { DataSourceOptions } from "typeorm";
 
 
 const ormconfig: DataSourceOptions = {
-    type: 'postgres',
-    host: 'db.yrszjzrelqcxdumyvpjm.supabase.co',
-    port: 5432,
-    username: 'postgres',
-    password: 'mediumclone@123',
-    database: 'postgres',
+    type: 'mysql',
+    host: 'localhost',
+    port: 3306,
+    username: 'root',
+    password: 'root',
+    database: 'clone',
     entities : [__dirname + '/**/*.entity{.ts,.js}'],
     synchronize: true,
+ 
+    
 }
 export default ormconfig;
