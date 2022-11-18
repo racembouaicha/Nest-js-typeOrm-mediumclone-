@@ -1,4 +1,6 @@
 import { DataSourceOptions } from "typeorm";
+import { ArticleEntity } from "./Entity/Article.entity";
+import { TagEntity } from "./Entity/tag.entity";
 import { UserEntity } from "./Entity/user.entity";
 
 
@@ -9,7 +11,7 @@ const ormconfig: DataSourceOptions = {
     username: 'root',
     password: 'root',
     database: 'clone',
-    entities : [UserEntity],
+    entities : [UserEntity,TagEntity,ArticleEntity],
     synchronize: true,
  
     
