@@ -1,4 +1,5 @@
 import { DataSourceOptions } from "typeorm";
+import { UserEntity } from "./Entity/user.entity";
 
 
 const ormconfig: DataSourceOptions = {
@@ -8,7 +9,7 @@ const ormconfig: DataSourceOptions = {
     username: 'root',
     password: 'root',
     database: 'clone',
-    entities : [__dirname + '/**/*.entity{.ts,.js}'],
+    entities : [UserEntity],
     synchronize: true,
  
     
