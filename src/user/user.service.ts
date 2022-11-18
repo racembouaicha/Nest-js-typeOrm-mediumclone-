@@ -1,11 +1,12 @@
 import * as dotenv from "dotenv";
-import { UserEntity } from '@app/Entity/User.entity';
-import { Injectable } from '@nestjs/common';
+import { UserEntity } from '@app/Entity/user.entity';
+import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { sign } from 'jsonwebtoken';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/createUser.dto';
-
+import { LoginUserDto } from "./dto/loginUser.dto";
+import { compare } from 'bcrypt';
 
 @Injectable()
 export class UserService {
@@ -14,6 +15,23 @@ export class UserService {
         private readonly userRepository: Repository<UserEntity>
     ){}
     async createUser(createUserDto : CreateUserDto): Promise<UserEntity>{
+        const userByEmail = await this.userRepository.findOne(
+            {
+                where:
+                {
+                    email: createUserDto.email
+                }
+            })
+        const useByUsername = await this.userRepository.findOne(
+            {
+                where:
+                {
+                    username: createUserDto.username,
+                }
+            })
+        if(userByEmail || useByUsername){
+            throw new HttpException('Email or username are taken',422);
+        }
         const newUser = new UserEntity();
         Object.assign(newUser, createUserDto);
         console.log('newUser', newUser);
@@ -33,5 +51,38 @@ export class UserService {
                 token: this.generatejwt(user)
             }
         }
+    }
+
+    async findById(id: number): Promise<UserEntity> {
+        return this.userRepository.findOne({
+            where:{ 
+                id: id,
+            }
+        })   
+    }
+
+    async login(loginUserDto : LoginUserDto) : Promise<UserEntity> {
+        const user = await this.userRepository.findOne({
+            where:{ 
+                email: loginUserDto.email.toLowerCase(),
+            },
+            select :['id','username','email','bio','image', 'password']
+        })
+
+
+        if(!user){
+        throw new HttpException('Crendentials are not valid', 422);
+        }
+
+        const isPasswordCorrect = await compare(
+            loginUserDto.password,user.password
+        )
+
+        if(!isPasswordCorrect){
+            throw new HttpException('Crendentials are not valid', 422);
+        }
+
+        delete user.password;
+        return user
     }
 }
