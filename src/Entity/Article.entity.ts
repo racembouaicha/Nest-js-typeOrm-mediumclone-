@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, BeforeUpdate, ManyToOne } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, BeforeUpdate, ManyToOne, ManyToMany, JoinTable } from "typeorm"
 import { UserEntity } from "./user.entity"
 
 @Entity({name: 'articles'})
@@ -37,4 +37,8 @@ export class ArticleEntity {
 
     @ManyToOne(() => UserEntity,(user) => user.articles, {eager: true})
     author: UserEntity;
+
+    @ManyToMany(() => ArticleEntity)
+    @JoinTable()
+    favorites: ArticleEntity[];
 }
